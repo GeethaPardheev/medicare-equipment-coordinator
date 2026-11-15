@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DME Coordinator (mockup)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.6-7 8-7s8 2.5 8 7"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0M4 14v3a2 2 0 0 0 2 2h1v-6H5a1 1 0 0 0-1 1zM20 14v3a2 2 0 0 1-2 2h-1v-6h2a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 5 14h6l-1 8 9-12h-6z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A15 15 0 0 1 4 5a1 1 0 0 1 1-1z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h4v16H7zM14 4h4v16h-4z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 5h10v10M19 5 6 18"/></symbol>
+</defs></svg>
+
+<div class="shell">
+  <aside class="side">
+    <div class="logo"><i><svg class="ic"><use href="#i-bolt"/></svg></i>Coordinator</div>
+    <nav class="nav" role="tablist">
+      <span class="lbl">Case</span>
+      <button role="tab" data-v="ops" aria-selected="true"><svg class="ic"><use href="#i-pulse"/></svg>Live case</button>
+      <button role="tab" data-v="patient" aria-selected="false"><svg class="ic"><use href="#i-person"/></svg>Patient</button>
+      <button role="tab" data-v="advocate" aria-selected="false"><svg class="ic"><use href="#i-headset"/></svg>Care advocate<span class="count" id="advcount"></span></button>
+      <button role="tab" data-v="call" aria-selected="false"><svg class="ic"><use href="#i-phone"/></svg>Take a call</button>
+    </nav>
+    <nav class="nav">
+      <span class="lbl">Quality</span>
+      <a href="evals.html" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chart"/></svg>Evals<span class="count"><svg class="ic" style="width:12px;height:12px"><use href="#i-out"/></svg></span></a>
+    </nav>
+    <div class="foot">
+      <button class="btn" id="theme" style="justify-self:start"><svg class="ic"><use href="#i-moon"/></svg>Theme</button>
+      <span>Mockup · sample data</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ============ LIVE CASE ============ -->
+    <section id="v-ops">
+      <div class="head">
+        <div><h1>Eleanor Martinez</h1><div class="meta"><span>Standard manual wheelchair</span><span class="mono">K0001</span><span>Medicare Part B</span><span>Chicago 60614</span></div></div>
+        <div class="tools">
+          <div class="seg" id="scen"><button aria-pressed="true" data-s="gauntlet">Everything goes wrong</button><button aria-pressed="false" data-s="happy">Happy path</button><button aria-pressed="false" data-s="quiet">Patient goes quiet</button></div>
+        </div>
+      </div>
+
+      <div class="steps" id="steps"></div>
+
+      <div class="card stage">
+        <div class="nowline" id="now"><i class="dot"></i><time id="clock">Mon 21:00</time><p id="say"></p><button class="btn" id="goadv" hidden>Step in as care advocate</button></div>
+        <div class="board" id="board">
+          <svg id="wires"></svg>
+          <div class="col">
+            <div class="node" id="n-pcp"><span class="avatar">SC</span><div><b>Dr. Chen's office</b><span class="st" id="s-pcp"><i class="dot"></i><span></span></span></div><span class="ch">Phone, fax</span></div>
+            <div class="node" id="n-pat"><span class="avatar">EM</span><div><b>Eleanor Martinez</b><span class="st" id="s-pat"><i class="dot"></i><span></span></span></div><span class="ch">Text</span></div>
+          </div>
+          <div class="center">
+            <div class="node pill off" id="n-hum"><span class="avatar"><svg class="ic"><use href="#i-headset"/></svg></span><div><b>Care advocate</b><span class="st" id="s-hum"><i class="dot"></i><span>Offline</span></span></div></div>
+            <div class="hub" id="hub"><span><svg class="ic"><use href="#i-bolt"/></svg></span></div>
+            <div class="hubname">Coordinator</div>
+          </div>
+          <div>
+            <div class="suphead"><span>Suppliers, nearest first</span><span class="mono" id="supcount"></span></div>
+            <div class="sups" id="sups"></div>
+            <div class="legend"><span><i class="dot good"></i>Can serve her</span><span><i class="dot bad"></i>Ruled out</span><span><i class="dot warn"></i>Trying again</span><span><i class="dot hollow"></i>Not needed yet</span></div>
+          </div>
+        </div>
+        <div class="scrub">
+          <button class="pp" id="pp" aria-label="Play or pause"><svg class="ic"><use id="pp-ic" href="#i-pause"/></svg></button>
+          <div class="track"><input type="range" id="seek" min="0" max="1" value="0" aria-label="Move through the case"><div class="ticks" id="ticks"></div></div>
+          <span class="mono muted" id="pos"></span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card pad">
+          <div class="ttl">Activity
+            <div class="seg sm" id="filt"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="sup">Suppliers</button><button aria-pressed="false" data-f="ord">Order</button><button aria-pressed="false" data-f="pat">Patient</button><button aria-pressed="false" data-f="bad">Problems</button></div>
+          </div>
+          <div class="feed" id="feed"></div>
+        </div>
+        <div class="card stats">
+          <div class="stat"><b id="k-day">0</b><span>Days since intake</span></div>
+          <div class="stat"><b id="k-calls">0</b><span>Calls made</span></div>
+          <div class="stat"><b id="k-caught">0</b><span>Problems caught</span></div>
+          <div class="stat"><b id="k-hum">0</b><span>Times a human stepped in</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PATIENT ============ -->
+    <section id="v-patient" hidden>
+      <div class="head"><div><h1>Patient</h1><div class="meta"><span>Eleanor's phone, following the live case</span><span>Write to it as her</span></div></div></div>
+      <div class="middle">
+        <div class="phone"><div class="screen">
+          <div class="phead"><span class="avatar" style="background:var(--ink);color:var(--on-ink);border:0"><svg class="ic"><use href="#i-bolt"/></svg></span><div><b>Your care team</b><small>Replies in seconds</small></div></div>
+          <div class="pstat"><b id="p-head"></b><div class="prog" id="p-prog"></div></div>
+          <div class="msgs" id="p-msgs"></div>
+          <div class="quick"><button class="chip" data-say="Where is it?">Where is it?</button><button class="chip" data-say="What will I owe?">What will I owe?</button><button class="chip" data-say="Can I talk to a person?">Talk to a person</button></div>
+          <form class="compose" id="p-form"><input id="p-in" placeholder="Message" aria-label="Message" autocomplete="off"><button class="send" aria-label="Send"><svg class="ic"><use href="#i-up"/></svg></button></form>
+        </div></div>
+        <div class="card pad behind">
+          <div class="ttl">Behind the reply</div>
+          <p class="muted" id="b-empty">Send a message as Eleanor to see how it is handled.</p>
+          <div id="b-rows" hidden>
+            <div class="kv"><small>She wrote</small><span id="b-said"></span></div>
+            <div class="kv"><small>Understood as</small><span id="b-kind"></span></div>
+            <div class="kv"><small>Reply wording</small><span>Written in advance. The AI reads her message, it never improvises the answer.</span></div>
+            <div class="kv"><small>Human</small><span id="b-hum"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ADVOCATE ============ -->
+    <section id="v-advocate" hidden>
+      <div class="head"><div><h1>Care advocate</h1><div class="meta"><span>Only what the system couldn't finish alone</span></div></div></div>
+      <div class="card" id="adv-calm"><div class="empty"><span class="ring"><svg class="ic"><use href="#i-check"/></svg></span><h2>Nothing needs you</h2><p id="adv-note">The case is running itself.</p><button class="btn" id="adv-demo" style="margin-top:12px">Show a case that needs a human</button></div></div>
+      <div class="card inbox" id="adv-alert" hidden><div class="list" id="adv-list"></div><div class="detail" id="adv-detail"></div></div>
+    </section>
+
+    <!-- ============ TAKE A CALL ============ -->
+    <section id="v-call" hidden>
+      <div class="head"><div><h1>Take a call</h1><div class="meta"><span>You answer the phone. Watch what the system takes from your words.</span></div></div>
+        <div class="tools"><div class="seg" id="who"><button aria-pressed="true" data-w="sup">A supplier</button><button aria-pressed="false" data-w="pcp">Dr. Chen's office</button><button aria-pressed="false" data-w="pat">Eleanor</button></div><button class="btn" id="c-again">Start over</button></div></div>
+      <div class="card split">
+        <div class="left">
+          <div class="msgs" id="c-msgs"></div>
+          <div class="quick" id="c-quick"><button class="chip" data-reply="Yes, we do.">Yes, we do</button><button class="chip" data-reply="No, sorry.">No, sorry</button><button class="chip" data-reply="Hmm, let me check with my manager.">Dodge the question</button><button class="chip" data-reply="(hangs up)">Hang up</button></div>
+          <form class="compose" id="c-form"><input id="c-in" placeholder="Answer in your own words" aria-label="Your reply" autocomplete="off"><button class="send" aria-label="Send"><svg class="ic"><use href="#i-up"/></svg></button></form>
+        </div>
+        <div class="heard">
+          <div class="ttl">What the system heard <span>each answer needs your words as proof</span></div>
+          <div id="c-rows"></div>
+          <div class="verdict" id="c-verdict"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<aside class="drawer" id="drawer" hidden>
+  <header><div><b id="d-title"></b><small id="d-sub"></small></div><button class="x" id="d-close" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></header>
+  <div class="scroll" id="d-chat"></div>
+  <footer id="d-foot"></footer>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+const ic = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const DAYS = ["Tue 17", "Wed 18", "Thu 19", "Fri 20", "Mon 23", "Tue 24", "Wed 25"];
+const DAYNAME = { Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Mon: "Monday" };
+const SUP = ["Lakeshore", "Lincoln Park", "Halsted", "Windy City", "Prairie State", "Belmont", "Northside", "ChicagoLand", "South Loop", "Roosevelt", "Evanston", "Midwest"];
+const STEPPER = ["Order signed", "Supplier found", "Delivery booked", "Delivered"];
+const TAG = { bad: "Problem caught", out: "Ruled out", warn: "Waiting", human: "Needs a human" };
+
+/* ---------- case state, rebuilt from scratch on every seek ---------- */
+let calls = 0, caught = 0, humans = 0, eta = "", blocked = false, shown = -1, gen = 0, liveNow = null;
+let S = [], pos = -1, timer = null, filter = "all", inbox = [], extra = [];
+const called = new Set();
+const call = () => calls++;
+function party(id, cls, text) { const s = $("s-" + id); s.className = "st " + cls; s.lastElementChild.textContent = text; }
+function sup(i, cls, text) { const t = $("t" + i); t.className = "sup " + cls; t.querySelector("small").textContent = text; called.add(i); $("supcount").textContent = `${called.size} of 12 called`; }
+function step(i, cls) { const e = $("steps").querySelectorAll(".stp")[i]; e.className = "stp " + cls; e.querySelector("small").textContent = cls === "done" ? $("clock").textContent : ""; }
+function hum(cls, text) { $("n-hum").className = "node pill " + cls; party("hum", cls === "alert" ? "bad" : cls === "done" ? "good" : "", text); }
+function escalate(item) { inbox = inbox.filter(x => x.id !== item.id).concat(item); humans++; blocked = true; hum("alert", "Asked to step in"); }
+function settle(id) { inbox = inbox.filter(x => x.id !== id); blocked = false; hum("done", "Handed back"); }
+
+// [day, time, who, mood, lane, caption, effect, conversation]   c = coordinator, o = the other party
+const ASK_ADDR = [["c", "Hi Eleanor. We're arranging your wheelchair. Deliver to ZIP 60614?"]];
+const ASK_ORDER = [["c", "This is the automated assistant from Mira Mace. We need a signed order for Eleanor Martinez: standard wheelchair, K0001."], ["o", "Okay, I'll pass it on to Dr. Chen."]];
+const QUALIFY = (name, reply) => [["o", name + ", how can I help?"], ["c", "Can you serve a Medicare patient in 60614 who needs a K0001 wheelchair?"], ["o", reply]];
+const SCEN = {
+  gauntlet: [
+    [0, "09:00", "n-pat", "good", "pat", "Eleanor confirms her address.", () => party("pat", "good", "Address confirmed"), ASK_ADDR.concat([["o", "Yes. How much will I pay?"], ["c", "20% of the Medicare-approved amount, after your deductible. The supplier can't charge more."]])],
+    [0, "09:00", "n-pcp", "", "ord", "Asking Dr. Chen's office for the signed order.", () => { party("pcp", "live", "Order requested"); step(0, "on"); call(); }, ASK_ORDER],
+    [0, "09:00", "t0", "out", "sup", "Lakeshore isn't taking new patients.", () => { sup(0, "out", "No new patients"); call(); }, [["o", "Lakeshore Home Medical, this is Marcus."], ["c", "Are you taking new Medicare patients?"], ["o", "Not right now. Waitlist until January."]]],
+    [0, "09:00", "t1", "warn", "sup", "Lincoln Park doesn't answer. Calling back later.", () => { sup(1, "wait", "No answer"); call(); }, [["c", "(rings out, nobody picks up)"]]],
+    [0, "09:00", "t2", "good", "sup", "Halsted can deliver in two days.", () => { sup(2, "ok", "Ready · 2 days"); step(1, "on"); call(); }, QUALIFY("Halsted Home Health, this is Tony", "Yes. In stock, two business days, and we accept assignment.")],
+    [0, "11:00", "t1", "out", "sup", "Lincoln Park is out of stock.", () => { sup(1, "out", "Out of stock"); call(); }, [["c", "Do you have a K0001 in stock?"], ["o", "We're out. Maybe three weeks."]]],
+    [0, "11:00", "t3", "out", "sup", "Windy City would charge her more than 20%.", () => { sup(3, "out", "No assignment"); call(); }, [["c", "Do you accept Medicare assignment?"], ["o", "No, we bill the patient our own rate."]]],
+    [0, "11:00", "t4", "good", "sup", "Prairie State is ready as a backup.", () => { sup(4, "ok", "Backup · 3 days"); step(1, "done"); call(); }, QUALIFY("Prairie State Medical", "Yes, we have them. Three business days. We take assignment.")],
+    [1, "09:00", "n-pcp", "bad", "ord", "No order after a day. The office says they never got it.", () => { party("pcp", "bad", "Request lost, re-sent"); caught++; call(); }, [["c", "Do you have our request from Tuesday for Eleanor Martinez's order?"], ["o", "We don't have any record of that. Leave it with me, I'll take it to Dr. Chen today."]]],
+    [1, "13:00", "n-pcp", "bad", "ord", "The order arrives with the wrong code and no signature.", () => { party("pcp", "bad", "Wrong code, fixing"); caught++; call(); }, [["o", "FAX · Order for E. Martinez · Code K0004 · Signature: blank"], ["c", "The code should be K0001 and it needs Dr. Chen's signature. Could you resend it?"], ["o", "Sorry about that. We'll fix it this afternoon."]]],
+    [1, "16:00", "n-pcp", "good", "ord", "The corrected order arrives. K0001, signed.", () => { party("pcp", "good", "Order valid"); step(0, "done"); }, [["o", "FAX · Order for E. Martinez · Code K0001 · Signed, Dr. S. Chen"]]],
+    [1, "16:00", "t2", "good", "sup", "Halsted books delivery for Friday.", () => { sup(2, "booked", "Booked · Fri"); step(2, "done"); eta = "Friday"; call(); }, [["c", "We have the signed order. Can you deliver Friday?"], ["o", "Friday works. Send it over."]]],
+    [1, "16:00", "n-pat", "good", "pat", "Eleanor is told to expect it Friday.", () => party("pat", "good", "Expecting it Friday"), [["c", "Good news: your wheelchair is booked for Friday with Halsted."]]],
+    [2, "16:00", "t2", "warn", "sup", "Checking on Halsted. No answer.", () => { sup(2, "silent", "No answer"); call(); }, [["c", "(rings out, nobody picks up)"]]],
+    [3, "09:00", "t2", "bad", "sup", "Halsted has gone silent. Switching to the backup.", () => { sup(2, "silent", "Went silent"); step(2, "on"); eta = ""; caught++; call(); }, [["c", "(second try, still nobody picks up)"]]],
+    [3, "09:00", "t4", "good", "sup", "Prairie State books delivery for Wednesday.", () => { sup(4, "booked", "Booked · Wed"); step(2, "done"); eta = "Wednesday"; call(); }, [["c", "Our first supplier fell through. Can you take the order?"], ["o", "Sure. We can deliver Wednesday."]]],
+    [3, "09:00", "n-pat", "warn", "pat", "Eleanor is told about the delay.", () => party("pat", "warn", "Expecting it Wednesday"), [["c", "Your first supplier didn't confirm, so we've booked another. New delivery day: Wednesday."], ["o", "Ok, thank you."]]],
+    [4, "09:00", "t4", "good", "sup", "Prairie State confirms the delivery is still on.", call, [["c", "Checking the Wednesday delivery is still on."], ["o", "Yep, it's on the truck schedule."]]],
+    [6, "16:00", "n-pat", "good", "pat", "“It arrived.” Case closed.", () => { party("pat", "good", "Has her wheelchair"); sup(4, "booked", "Delivered"); step(3, "done"); }, [["c", "Did your wheelchair arrive?"], ["o", "It arrived."]]],
+  ],
+  happy: [
+    [0, "09:00", "n-pat", "good", "pat", "Eleanor confirms her address.", () => party("pat", "good", "Address confirmed"), ASK_ADDR.concat([["o", "Yes, that's right."]])],
+    [0, "09:00", "n-pcp", "", "ord", "Asking Dr. Chen's office for the signed order.", () => { party("pcp", "live", "Order requested"); step(0, "on"); call(); }, ASK_ORDER],
+    [0, "09:00", "t0", "good", "sup", "Lakeshore can deliver in two days.", () => { sup(0, "ok", "Ready · 2 days"); step(1, "on"); call(); }, QUALIFY("Lakeshore Home Medical", "Yes. In stock, two days, and we accept assignment.")],
+    [0, "09:00", "t1", "good", "sup", "Lincoln Park is ready as a backup.", () => { sup(1, "ok", "Backup · 3 days"); step(1, "done"); call(); }, QUALIFY("Lincoln Park DME", "We can. Three days, assignment accepted.")],
+    [0, "09:00", "t2", "good", "sup", "Halsted could do it too. Kept as a spare.", () => { sup(2, "ok", "Spare"); call(); }, QUALIFY("Halsted Home Health", "Yes, no problem.")],
+    [1, "11:00", "n-pcp", "good", "ord", "The signed order arrives. K0001, signed.", () => { party("pcp", "good", "Order valid"); step(0, "done"); }, [["o", "FAX · Order for E. Martinez · Code K0001 · Signed, Dr. S. Chen"]]],
+    [1, "11:00", "t0", "good", "sup", "Lakeshore books delivery for Friday.", () => { sup(0, "booked", "Booked · Fri"); step(2, "done"); eta = "Friday"; call(); }, [["c", "We have the signed order. Can you deliver Friday?"], ["o", "Friday is fine."]]],
+    [1, "11:00", "n-pat", "good", "pat", "Eleanor is told to expect it Friday.", () => party("pat", "good", "Expecting it Friday"), [["c", "Good news: your wheelchair is booked for Friday with Lakeshore."]]],
+    [2, "16:00", "t0", "good", "sup", "Lakeshore confirms the delivery is still on.", call, [["c", "Checking the Friday delivery is still on."], ["o", "All set for Friday."]]],
+    [3, "16:00", "n-pat", "good", "pat", "“It arrived.” Case closed.", () => { party("pat", "good", "Has her wheelchair"); sup(0, "booked", "Delivered"); step(3, "done"); }, [["c", "Did your wheelchair arrive?"], ["o", "It arrived."]]],
+  ],
+  quiet: [
+    [0, "09:00", "n-pat", "warn", "pat", "Texted Eleanor to confirm her address. No reply yet.", () => party("pat", "warn", "Text 1, no reply"), ASK_ADDR],
+    [0, "09:00", "n-pcp", "", "ord", "Asking Dr. Chen's office for the signed order.", () => { party("pcp", "live", "Order requested"); step(0, "on"); call(); }, ASK_ORDER],
+    [0, "09:00", "t0", "good", "sup", "Lakeshore can deliver in two days.", () => { sup(0, "ok", "Ready · 2 days"); step(1, "on"); call(); }, QUALIFY("Lakeshore Home Medical", "Yes. In stock, two days, and we accept assignment.")],
+    [0, "09:00", "t1", "good", "sup", "Lincoln Park is ready as a backup.", () => { sup(1, "ok", "Backup · 3 days"); step(1, "done"); call(); }, QUALIFY("Lincoln Park DME", "We can. Three days, assignment accepted.")],
+    [1, "09:00", "n-pat", "warn", "pat", "Second text to Eleanor. Still nothing.", () => party("pat", "warn", "Text 2, no reply"), [["c", "Hi Eleanor, checking again: is ZIP 60614 right for your wheelchair delivery?"]]],
+    [1, "11:00", "n-pcp", "good", "ord", "The signed order arrives. K0001, signed.", () => { party("pcp", "good", "Order valid"); step(0, "done"); }, [["o", "FAX · Order for E. Martinez · Code K0001 · Signed, Dr. S. Chen"]]],
+    [2, "09:00", "n-pat", "warn", "pat", "Third and last text. No reply.", () => party("pat", "warn", "Text 3, no reply"), [["c", "Eleanor, we can't book your delivery until you confirm your ZIP. Reply YES if 60614 is right."]]],
+    [2, "13:00", "n-hum", "human", "hum", "Out of tries. Asking a care advocate to reach Eleanor.", () => { party("pat", "bad", "Not answering"); escalate({ id: "quiet", who: "EM", title: "Eleanor isn't answering", sub: "Thu 13:00 · blocks delivery", why: "Three texts, no reply. Delivery can't be booked until she confirms her address.", trail: ["Tue 09:00", "Wed 09:00", "Thu 09:00"], facts: [["good", "Signed order is valid"], ["good", "Two suppliers ready"], ["bad", "Address not confirmed"]], next: "Call her, confirm ZIP 60614, then hand it back.", acts: ["I reached her, 60614 is right", "She gave a new address"] }); }, [["c", "Hand-off written from the case log. No AI wording in it."]]],
+    [2, "15:00", "n-hum", "good", "hum", "The care advocate reached her. Coordinator takes it back.", () => { settle("quiet"); party("pat", "good", "Address confirmed"); }, [["o", "Reached Eleanor by phone. 60614 is correct."]]],
+    [2, "15:00", "t0", "good", "sup", "Lakeshore books delivery for Monday.", () => { sup(0, "booked", "Booked · Mon"); step(2, "done"); eta = "Monday"; call(); }, [["c", "We have the signed order. Can you deliver Monday?"], ["o", "Monday works."]]],
+    [2, "15:00", "n-pat", "good", "pat", "Eleanor is told to expect it Monday.", () => party("pat", "good", "Expecting it Monday"), [["c", "Thanks for confirming with our care advocate. Your wheelchair is booked for Monday."]]],
+    [4, "16:00", "n-pat", "good", "pat", "“It arrived.” Case closed.", () => { party("pat", "good", "Has her wheelchair"); sup(0, "booked", "Delivered"); step(3, "done"); }, [["c", "Did your wheelchair arrive?"], ["o", "It arrived."]]],
+  ],
+};
+const whoName = id => id[0] === "t" ? SUP[+id.slice(1)] : { "n-pcp": "Dr. Chen's office", "n-pat": "Eleanor Martinez", "n-hum": "Care advocate" }[id];
+const LANE_IC = { sup: "phone", ord: "doc", pat: "msg", hum: "headset" };
+
+function reset() {
+  gen++; calls = caught = humans = 0; eta = ""; blocked = false; shown = -1; called.clear(); inbox = inbox.filter(x => x.id === "person");
+  $("clock").textContent = "Mon 21:00"; $("say").textContent = "Intake is done. The care advocate logs off and the coordinator takes over."; $("now").className = "nowline";
+  $("steps").innerHTML = STEPPER.map((t, i) => `${i ? '<span class="rule"></span>' : ""}<span class="stp"><span class="c">${ic("check")}</span>${t}<small class="mono"></small></span>`).join("");
+  $("sups").innerHTML = SUP.map((n, i) => `<button class="sup idle" id="t${i}" data-step=""><b>${n}</b><small>Not called</small><i class="dot"></i></button>`).join("");
+  ["n-pcp", "n-pat", "n-hum"].forEach(id => $(id).dataset.step = "");
+  party("pcp", "", "Not contacted yet"); party("pat", "", "Not contacted yet"); hum("off", "Offline"); $("supcount").textContent = "0 of 12 called";
+  wires(null);
+}
+function paint() {   // everything derived from state
+  const day = shown < 0 ? 0 : +DAYS[S[shown][0]].split(" ")[1] - 16;
+  $("k-day").textContent = day; $("k-calls").textContent = calls; $("k-caught").textContent = caught; $("k-hum").textContent = humans;
+  $("seek").value = pos + 1; $("seek").style.setProperty("--p", (pos + 1) / S.length * 100 + "%"); $("pos").textContent = `${pos + 1} / ${S.length}`;
+  $("pp-ic").setAttribute("href", timer ? "#i-pause" : "#i-play"); $("goadv").hidden = !blocked;
+  renderFeed(); renderPhone(); renderInbox();
+}
+function renderFeed(fresh) {
+  let last = -1, html = "";
+  for (let i = 0; i <= shown; i++) { const [d, t, , mood, lane, say] = S[i];
+    if (filter === "bad" ? mood !== "bad" && mood !== "human" : filter !== "all" && lane !== filter) continue;
+    if (d !== last) { html += `<div class="fd">${DAYS[d]}</div>`; last = d; }
+    html += `<button class="fr ${mood}${i === fresh ? " new" : ""}" data-step="${i}"><time>${t}</time><span class="who">${ic(LANE_IC[lane])}</span><span class="tx">${say}</span><span class="tag ${mood}">${TAG[mood] || ""}<i class="dot"></i></span></button>`; }
+  $("feed").innerHTML = html || `<p class="muted fe">${shown < 0 ? "Nothing yet. Press play." : "Nothing of this kind so far."}</p>`;
+  $("feed").scrollTop = $("feed").scrollHeight;
+}
+
+function wires(live) {
+  liveNow = live;
+  const b = $("board").getBoundingClientRect(), box = id => { const r = $(id).getBoundingClientRect(); return { l: r.left - b.left, r: r.right - b.left, t: r.top - b.top, b: r.bottom - b.top, cx: r.left + r.width / 2 - b.left, cy: r.top + r.height / 2 - b.top }; };
+  const h = box("hub"), path = id => {
+    const n = box(id);
+    if (id === "n-hum") return `M${h.cx} ${h.t} L${n.cx} ${n.b}`;
+    // supplier wires stop at the edge of the grid, level with the tile; the tile itself lights up
+    const left = n.cx < h.cx, x1 = left ? h.l : h.r, x2 = left ? n.r : id.startsWith("t") ? box("sups").l - 6 : n.l, mx = (x1 + x2) / 2;
+    return `M${x1} ${h.cy} C${mx} ${h.cy} ${mx} ${n.cy} ${x2} ${n.cy}`;
+  };
+  const ids = ["n-pcp", "n-pat", "n-hum"].concat(live && live.startsWith("t") ? [live] : []);
+  $("wires").innerHTML = ids.map(id => { const d = path(id), on = id === live;
+    return `<path d="${d}" class="${on ? "live" : ""}"/>` + (on ? `<circle r="3.5" class="pulse"><animateMotion dur="0.9s" repeatCount="indefinite" path="${d}"/></circle>` : ""); }).join("");
+  document.querySelectorAll(".node").forEach(p => p.classList.toggle("live", p.id === live));
+  document.querySelectorAll(".sup").forEach(t => t.classList.toggle("calling", t.id === live));
+}
+
+function apply(i, instant) {
+  const [d, time, target, mood, , text, fx] = S[i], g = gen;
+  const land = () => {
+    if (g !== gen) return;
+    $("clock").textContent = DAYS[d].split(" ")[0] + " " + time; $("say").textContent = text; $("now").className = "nowline " + mood;
+    fx(); shown = i; $(target).dataset.step = i;
+    if (instant) return;
+    if (i === S.length - 1) wires(null);
+    if (blocked || i === S.length - 1) pause();
+    paint(); renderFeed(i);
+  };
+  if (instant) return land();
+  wires(target); $("now").className = "nowline"; $("say").textContent = (LANE_IC[S[i][4]] === "msg" ? "Texting " : target === "n-hum" ? "Reaching the " : "Calling ") + whoName(target).replace("Care", "care") + "…";
+  setTimeout(land, 650);
+}
+function seek(i) { reset(); for (let k = 0; k <= i; k++) apply(k, true); pos = i; wires(i >= 0 && i < S.length - 1 ? S[i][2] : null); paint(); }
+function tick() { if (blocked || pos >= S.length - 1) return pause(); apply(++pos); paint(); }
+function pause() { clearInterval(timer); timer = null; paint(); }
+function play() { if (blocked) return show("advocate"); if (pos >= S.length - 1) seek(-1); clearInterval(timer); timer = setInterval(tick, 1500); tick(); }
+function load(name, at) {
+  clearInterval(timer); timer = null; S = SCEN[name];
+  document.querySelectorAll("#scen button").forEach(x => x.setAttribute("aria-pressed", x.dataset.s === name));
+  $("seek").max = S.length;
+  const first = {}; S.forEach(([d], i) => first[d] ??= i);
+  $("ticks").innerHTML = Object.entries(first).map(([d, i]) => `<span style="left:calc(6px + ${(i + 1) / S.length} * (100% - 12px))">${DAYS[d].split(" ")[0]}</span>`).join("");
+  extra = []; if (at == null) { seek(-1); play(); } else seek(Math.min(at, S.length - 1));
+}
+
+/* ---------- patient phone: mirrors the live case, and you can write as Eleanor ---------- */
+function renderPhone() {
+  const st = [...$("steps").querySelectorAll(".stp")].map(e => e.classList.contains("done"));
+  $("p-head").textContent = st[3] ? "Delivered" : st[2] && eta ? "Arriving " + eta : "Getting your wheelchair ready";
+  const at = st.indexOf(false);
+  $("p-prog").innerHTML = ["Order", "Supplier", "Booked", "Delivered"].map((t, i) => `<span class="${st[i] ? "done" : i === at ? "now" : ""}">${t}</span>`).join("");
+  let last = -1, html = "";
+  for (let i = 0; i <= shown; i++) { if (S[i][4] !== "pat") continue; const d = S[i][0];
+    if (d !== last) { html += `<span class="day">${DAYNAME[DAYS[d].split(" ")[0]]}</span>`; last = d; }
+    html += S[i][7].map(([w, t]) => `<div class="b ${w === "c" ? "in" : "out"}">${t}</div>`).join(""); }
+  if (extra.length) html += `<span class="day">Just now</span>` + extra.map(([w, t]) => w === "…" ? `<div class="b in typing"><i></i><i></i><i></i></div>` : `<div class="b ${w === "c" ? "in" : "out"}">${esc(t)}</div>`).join("");
+  $("p-msgs").innerHTML = html || `<span class="day">No messages yet</span>`; $("p-msgs").scrollTop = $("p-msgs").scrollHeight;
+}
+function answer(t) {
+  if (/person|human|someone|call me|agent|nurse/i.test(t)) return ["She wants a person", "I've asked a care advocate to call you today. Everything else keeps moving.", true];
+  if (/owe|cost|pay|price|much|bill|charge/i.test(t)) return ["A question about cost", "You pay 20% of the Medicare-approved amount, after your deductible. The supplier can't charge more.", false];
+  if (/where|when|status|arriv|deliver|late|coming/i.test(t)) { const h = $("p-head").textContent; return ["A question about status", h === "Delivered" ? "Your wheelchair has been delivered." : eta ? `It's booked and arriving ${eta}.` : "We're lining up a supplier and your doctor's signed order. I'll text you as soon as delivery is booked.", false]; }
+  if (/address|moved|zip|\b\d{5}\b/i.test(t)) return ["An address change", "Thanks. I've paused booking until the new address is confirmed with you.", false];
+  return ["Something it can't place", "Thanks, I've noted that for your care team. Is there anything about your delivery I can check?", false];
+}
+function patientSay(text) {
+  if (!text.trim()) return;
+  extra.push(["o", text], ["…"]); renderPhone();
+  setTimeout(() => { const [kind, reply, human] = answer(text); extra.pop(); extra.push(["c", reply]);
+    $("b-empty").hidden = true; $("b-rows").hidden = false; $("b-said").textContent = `“${text}”`; $("b-kind").textContent = kind; $("b-hum").textContent = human ? "Care advocate asked to call her" : "Not needed";
+    if (human && !inbox.some(x => x.id === "person")) inbox.push({ id: "person", who: "EM", title: "Eleanor asked for a person", sub: "Just now · case keeps running", why: "She asked to talk to someone. Nothing is blocked; the coordinator is still working the case.", facts: [["good", "No action needed on the order or suppliers"]], next: "Call her back today.", acts: ["Done, I called her"] });
+    paint(); }, 900);
+}
+
+/* ---------- care advocate inbox ---------- */
+function renderInbox() {
+  $("advcount").textContent = inbox.length || ""; $("advcount").className = "count" + (inbox.length ? " n" : "");
+  $("adv-calm").hidden = !!inbox.length; $("adv-alert").hidden = !inbox.length;
+  if (!inbox.length) return;
+  const it = inbox[0];
+  $("adv-list").innerHTML = inbox.map((x, i) => `<div class="item${i ? "" : " sel"}"><span class="avatar">${x.who}</span><div><b>${x.title}</b><small>${x.sub}</small></div></div>`).join("");
+  $("adv-detail").innerHTML = `<div><h2>${it.title}</h2><p class="muted" style="margin-top:4px">${it.why}</p></div>` +
+    (it.trail ? `<div><div class="lab">What the system tried</div><div class="trail">${it.trail.map(t => `<span class="t"><i>${ic("x")}</i>Text, ${t}</span>`).join('<span class="sep"></span>')}</div></div>` : "") +
+    `<div><div class="lab">Where the case stands</div><div class="facts">${it.facts.map(([c, t]) => `<span class="fact ${c}"><i class="dot"></i>${t}</span>`).join("")}</div></div>` +
+    `<div><div class="lab">Suggested next step</div><p>${it.next}</p></div>` +
+    `<div class="acts">${it.acts.map((a, i) => `<button class="btn lg${i ? "" : " ink"}" data-resolve="${it.id}">${a}</button>`).join("")}</div>`;
+}
+function resolve(id) {
+  if (id === "quiet") { $("adv-note").innerHTML = "Handed back. The coordinator is finishing the case."; $("adv-demo").textContent = "Watch it finish"; $("adv-demo").dataset.go = "ops"; blocked = false; play(); }
+  else { inbox = inbox.filter(x => x.id !== id); paint(); }
+}
+
+/* ---------- take a call: you are the other party ---------- */
+const WHO = {
+  sup: { open: "Halsted Supply, this is Tony.", hi: "Hi, this is the automated assistant from Mira Mace, calling about a Medicare patient.", ok: "Qualified. Halsted goes on the shortlist.", no: "Can't serve her. Moving to the next supplier.", unk: "Not enough to decide. It will call back and ask only what's missing.",
+    items: [["Taking new Medicare patients", "Are you taking new Medicare patients?"], ["K0001 wheelchair in stock", "Do you have a K0001 standard wheelchair in stock?"], ["Accepts Medicare assignment", "Do you accept Medicare assignment?"], ["Delivers to 60614", "Do you deliver to ZIP 60614?"]] },
+  pcp: { open: "Sunrise Family Medicine, front desk.", hi: "Hi, this is the automated assistant from Mira Mace, calling about Eleanor Martinez.", ok: "Order is on its way. It will check the fax tomorrow morning.", no: "The office refused. This goes to a care advocate.", unk: "No clear commitment. It will call again tomorrow.",
+    items: [["Received the order request", "Did you receive our request for her wheelchair order?"], ["Dr. Chen will sign and send it", "Can Dr. Chen sign it and fax it back?"]] },
+  pat: { open: "Hello?", hi: "Hi Eleanor, this is the automated assistant from your care team at Mira Mace.", ok: "Address confirmed. Delivery can be booked.", no: "Delivery is paused until the address is sorted out.", unk: "Nothing confirmed. It will try her again later.",
+    items: [["Delivery address is right", "Is ZIP 60614 still right for your wheelchair delivery?"], ["Someone will be home", "Will someone be home to receive it?"]] },
+};
+let C = null;
+function startCall(k) { const w = WHO[k]; C = { w, i: 0, tries: 0, res: [], over: false, msgs: [["out", w.open], ["agent", w.hi + " " + w.items[0][1]]] }; renderCall(); }
+function renderCall() {
+  const { w, res, over, i } = C;
+  $("c-msgs").innerHTML = C.msgs.map(([c, t]) => `<div class="b ${c}">${esc(t)}</div>`).join(""); $("c-msgs").scrollTop = $("c-msgs").scrollHeight;
+  $("c-rows").innerHTML = w.items.map(([label], k) => { const r = res[k], cls = r ? r[0] : !over && k === i ? "ask" : "";
+    return `<div class="hrow ${cls}"><span class="m">${r ? r[0] === "y" ? ic("check") : r[0] === "n" ? ic("x") : "?" : ""}</span><div><b>${label}</b>${r ? r[0] === "u" ? "<q>No clear answer, so it isn't counted</q>" : `<q>${esc(r[1])}</q>` : cls ? "<q>Asking now</q>" : ""}</div></div>`; }).join("");
+  const no = res.some(r => r && r[0] === "n"), all = res.filter(r => r && r[0] === "y").length === w.items.length;
+  $("c-verdict").className = "verdict " + (!over ? "" : no ? "bad" : all ? "good" : "warn");
+  $("c-verdict").innerHTML = `<i class="dot"></i>` + (!over ? `Listening. ${w.items.length - res.filter(Boolean).length} answers to go.` : no ? w.no : all ? w.ok : w.unk);
+  $("c-in").disabled = over; $("c-quick").style.opacity = over ? .4 : 1;
+}
+function reply(text) {
+  if (!text.trim() || C.over) return;
+  const { w } = C, q = w.items[C.i][1], bye = () => { C.over = true; };
+  C.msgs.push(["out", text]);
+  const hung = /hang|click|bye/i.test(text), neg = /\b(no|nope|not|don'?t|can'?t|cannot|never|won'?t|out of|waitlist|wrong)\b/i.test(text), yes = /\b(yes|yeah|yep|sure|we do|we are|i do|we can|correct|right|of course|absolutely|in stock|will do|i will|got it|ok|okay)\b/i.test(text);
+  if (hung) bye();
+  else if (neg) { C.res[C.i] = ["n", text]; C.msgs.push(["agent", "Understood. Thank you for your time."]); bye(); }
+  else if (!yes && !C.tries) { C.tries = 1; C.msgs.push(["agent", "Sorry, just so I have it right: " + q[0].toLowerCase() + q.slice(1)]); }
+  else { C.res[C.i] = yes ? ["y", text] : ["u"]; C.tries = 0; C.i++;
+    if (C.i < w.items.length) C.msgs.push(["agent", (yes ? "Great. " : "No problem. ") + w.items[C.i][1]]); else { C.msgs.push(["agent", "That's everything I need. Thank you, goodbye."]); bye(); } }
+  renderCall();
+}
+
+/* ---------- wiring ---------- */
+function show(v) { document.querySelectorAll(".nav button[data-v]").forEach(t => t.setAttribute("aria-selected", t.dataset.v === v)); ["ops", "patient", "advocate", "call"].forEach(x => $("v-" + x).hidden = x !== v); $("drawer").hidden = true; if (v === "ops") wires(liveNow); if (v === "patient") renderPhone(); }
+document.addEventListener("click", e => {
+  const on = sel => e.target.closest(sel);
+  let t;
+  if (t = on(".nav button[data-v]")) show(t.dataset.v);
+  if (t = on(".seg button")) { t.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === t)); if (t.dataset.s) load(t.dataset.s); if (t.dataset.f) { filter = t.dataset.f; renderFeed(); } if (t.dataset.w) startCall(t.dataset.w); }
+  if ((t = on("[data-step]")) && t.dataset.step !== "") {
+    const i = +t.dataset.step, [d, time, who, mood, lane, say, , chat] = S[i];
+    $("d-title").textContent = whoName(who); $("d-sub").textContent = `${DAYS[d]}, ${time} · ${chat[0][1].startsWith("FAX") ? "Fax" : lane === "pat" ? "Text messages" : lane === "hum" ? "Hand-off" : "Phone call"}`;
+    $("d-chat").innerHTML = chat.map(([w, x]) => x.startsWith("FAX") ? `<div class="fax">${ic("doc")}<span>${x.slice(6)}</span></div>` : x[0] === "(" ? `<span class="day">${x.slice(1, -1)}</span>` : `<div class="b ${w === "c" ? "out" : "in"}">${x}</div>`).join("");
+    $("d-foot").innerHTML = `<span class="tag ${mood}"><i class="dot"></i></span>${say}`; $("drawer").hidden = false;
+  }
+  if (on("#d-close")) $("drawer").hidden = true;
+  if (on("#pp")) timer ? pause() : play();
+  if (on("#goadv")) show("advocate");
+  if (on("#adv-demo")) { if (e.target.dataset.go) show("ops"); else load("quiet", SCEN.quiet.findIndex(s => s[3] === "human")); }
+  if (t = on("[data-resolve]")) resolve(t.dataset.resolve);
+  if (t = on("[data-say]")) patientSay(t.dataset.say);
+  if (t = on("[data-reply]")) reply(t.dataset.reply);
+  if (on("#c-again")) startCall(document.querySelector("#who [aria-pressed=true]").dataset.w);
+  if (on("#theme")) { const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; }
+});
+$("seek").addEventListener("input", e => { clearInterval(timer); timer = null; seek(+e.target.value - 1); });
+$("p-form").addEventListener("submit", e => { e.preventDefault(); patientSay($("p-in").value); $("p-in").value = ""; });
+$("c-form").addEventListener("submit", e => { e.preventDefault(); reply($("c-in").value); $("c-in").value = ""; });
+addEventListener("resize", () => wires(liveNow));
+addEventListener("keydown", e => { if (e.key === "Escape") $("drawer").hidden = true; });
+const q = new URLSearchParams(location.search);
+if (q.get("theme")) document.documentElement.dataset.theme = q.get("theme");
+startCall("sup");
+document.fonts.ready.then(() => {
+  load(q.get("s") || "gauntlet", q.has("t") ? +q.get("t") : null);
+  if (location.hash) show(location.hash.slice(1));
+  if (q.has("open")) document.querySelector(`.fr[data-step="${q.get("open")}"]`)?.click();
+  (q.get("say") || "").split("|").filter(Boolean).forEach(x => location.hash === "#call" ? reply(x) : patientSay(x));
+});
+</script>
+</body>
+</html>
