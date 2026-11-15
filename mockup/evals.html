@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coordinator Evals (mockup)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 5 14h6l-1 8 9-12h-6z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+</defs></svg>
+
+<div class="page">
+  <div class="logo" style="padding:0;margin-bottom:26px"><i><svg class="ic"><use href="#i-bolt"/></svg></i>Coordinator</div>
+  <div class="head">
+    <div><h1>Evals</h1><div class="meta"><span>Three questions, answered by running the real checks</span></div></div>
+    <div class="tools">
+      <div class="seg" id="model"><button aria-pressed="true">Claude Haiku</button><button aria-pressed="false">Local qwen3.5</button><button aria-pressed="false">Claude Opus</button></div>
+      <button class="btn ink" id="all"><svg class="ic" style="width:11px;height:11px;fill:currentColor"><use href="#i-play"/></svg>Run all</button>
+    </div>
+  </div>
+
+  <div class="trio">
+    <div class="card suite">
+      <h2>Does it hear correctly?<button class="btn" data-run="hear">Run</button></h2>
+      <p class="sub"><span class="pill">Uses the AI model</span><br>16 phone calls with simulated suppliers whose true answers we know. Click a dot to read the call.</p>
+      <div class="big"><b id="h-n">0</b><span>dangerous mistakes<br><span class="mono" id="h-ok">0 / 16</span> decisions right</span></div>
+      <div class="meter"><i id="h-bar"></i></div>
+      <div class="dots d16" id="h-dots"></div>
+      <div class="legend"><span><i class="dot good"></i>Right</span><span><i class="dot warn"></i>Unsure, calls back</span><span><i class="dot bad"></i>Wrong</span></div>
+      <span class="ran" id="h-ran"></span>
+    </div>
+
+    <div class="card suite">
+      <h2>Does it stay safe?<button class="btn" data-run="eng">Run</button></h2>
+      <p class="sub"><span class="pill">No AI involved</span><br>400 random worlds where suppliers vanish, offices lose faxes and patients go quiet. Six rules must never break.</p>
+      <div class="big"><b id="e-n">0</b><span>rules broken<br><span class="mono" id="e-ok">0 / 400</span> hostile worlds</span></div>
+      <div class="meter"><i id="e-bar"></i></div>
+      <div class="dots d400" id="e-dots"></div>
+      <div class="legend"><span><i class="dot good"></i>Delivered alone</span><span><i class="dot" style="background:var(--muted)"></i>To a human</span><span><i class="dot bad"></i>Rule broken</span></div>
+      <span class="ran" id="e-ran"></span>
+    </div>
+
+    <div class="card suite">
+      <h2>Do the cases pass?<button class="btn" data-run="cases">Run</button></h2>
+      <p class="sub"><span class="pill">Uses the AI model</span><br>The three full cases, start to finish, with every conversation held by the model.</p>
+      <div class="big"><b id="c-n">0</b><span>of 3 cases pass<br>end to end</span></div>
+      <div class="meter"><i id="c-bar"></i></div>
+      <div class="cases" id="c-list"></div>
+      <span class="ran" id="c-ran"></span>
+    </div>
+  </div>
+</div>
+
+<aside class="drawer" id="drawer" hidden>
+  <header><div><b id="d-title"></b><small id="d-sub"></small></div><button class="x" id="d-close" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></header>
+  <div class="scroll" id="d-chat"></div>
+  <footer id="d-foot"></footer>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+const CASES = [["Happy path", "Delivered · 6 calls", "happy"], ["Everything goes wrong", "Delivered by backup · 14 calls", "gauntlet"], ["Patient goes quiet", "Stops and asks a human", "quiet"]];
+const CHECK = '<svg class="ic"><use href="#i-check"/></svg>';
+const timers = {};
+const CALLS = [["Are you taking new Medicare patients?", "Not at the moment, sorry.", "Rejected, correctly: not taking patients"], ["Do you accept Medicare assignment?", "Yes, always.", "Qualified, correctly"], ["Do you have a K0001 in stock?", "We're out for three weeks.", "Rejected, correctly: out of stock"], ["Do you deliver to 60614?", "Sure, that's in our area.", "Qualified, correctly"]];
+const WHY = ["supplier went silent", "patient never replied", "office refused the order", "no supplier could serve"];
+function busy(key, on) { const b = document.querySelector(`[data-run="${key}"]`); b.disabled = on; b.textContent = on ? "Running…" : "Run again"; if (!on) document.getElementById(key[0] + "-ran").textContent = "Finished just now"; }
+function fill(key, n, ms, each, instant) {
+  clearInterval(timers[key]);
+  if (instant) { for (let i = 0; i < n; i++) each(i); return busy(key, false); }
+  busy(key, true); let i = 0; timers[key] = setInterval(() => { if (i >= n) { clearInterval(timers[key]); return busy(key, false); } each(i++); }, ms);
+}
+function hear(instant) {
+  $("h-dots").innerHTML = Array.from({ length: 16 }, (_, i) => `<button class="d" data-i="${i}" title="Supplier ${i + 1}" aria-label="Supplier ${i + 1}">${CHECK}</button>`).join("");
+  $("h-ok").textContent = "0 / 16"; $("h-bar").style.width = 0;
+  if (!instant) $("h-dots").children[0].className = "d run";
+  fill("hear", 16, 420, i => { const d = $("h-dots").children[i]; d.className = "d good"; $("h-ok").textContent = `${i + 1} / 16`; $("h-bar").style.width = (i + 1) / 16 * 100 + "%"; if (d.nextElementSibling && !instant) d.nextElementSibling.className = "d run"; }, instant);
+}
+function eng(instant) {
+  $("e-dots").innerHTML = Array.from({ length: 400 }, () => `<i class="d"></i>`).join(""); $("e-ok").textContent = "0 / 400"; $("e-bar").style.width = 0;
+  fill("eng", 400, 6, i => { const alone = i % 11 === 3, d = $("e-dots").children[i]; d.className = "d " + (alone ? "good" : "human"); d.title = `World ${i + 1}: ` + (alone ? "delivered with no human" : "handed to a human, " + WHY[i % 4]); $("e-ok").textContent = `${i + 1} / 400`; $("e-bar").style.width = (i + 1) / 400 * 100 + "%"; }, instant);
+}
+function cases(instant) {
+  $("c-list").innerHTML = CASES.map(([n, s, k]) => `<div class="case"><span class="m">${CHECK}</span><div><b>${n}</b><small>${s}</small></div><a class="btn" href="index.html?s=${k}" target="_blank" rel="noopener">Watch</a></div>`).join("");
+  $("c-n").textContent = "0"; $("c-bar").style.width = 0;
+  fill("cases", 3, 1500, i => { $("c-list").children[i].classList.add("pass"); $("c-n").textContent = i + 1; $("c-bar").style.width = (i + 1) / 3 * 100 + "%"; }, instant);
+}
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-run]"); if (r && !r.disabled) ({ hear, eng, cases })[r.dataset.run]();
+  if (e.target.closest("#all")) { hear(); eng(); cases(); }
+  const segb = e.target.closest(".seg button"); if (segb) { segb.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === segb)); hear(); cases(); }
+  const d = e.target.closest(".d16 .d");
+  if (d && d.classList.contains("good")) {
+    const i = +d.dataset.i, [ask, said, verdict] = CALLS[i % 4];
+    $("d-title").textContent = `Supplier ${i + 1}`; $("d-sub").textContent = "Simulated phone call";
+    $("d-chat").innerHTML = [["in", `Supplier ${i + 1}, how can I help?`], ["out", ask], ["in", said], ["out", "Understood, thank you."]].map(([w, t]) => `<div class="b ${w}">${t}</div>`).join("");
+    $("d-foot").innerHTML = `<i class="dot good"></i>${verdict}`; $("drawer").hidden = false;
+  }
+  if (e.target.closest("#d-close")) $("drawer").hidden = true;
+});
+const q = new URLSearchParams(location.search);
+if (q.get("theme")) document.documentElement.dataset.theme = q.get("theme");
+const instant = q.has("done");
+hear(instant); eng(instant); cases(instant);
+</script>
+</body>
+</html>
