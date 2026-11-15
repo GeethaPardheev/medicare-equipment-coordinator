@@ -1,4 +1,4 @@
-# DME coordinator
+# Medicare equipment coordinator
 
 A prototype that gets a Medicare patient her wheelchair without a person chasing it.
 
@@ -16,7 +16,7 @@ It takes Eleanor Martinez's case (standard manual wheelchair, K0001) from "intak
 Python 3.9 or newer. No dependencies for the engine and tests.
 
 ```bash
-git clone <this repo> && cd dme-coordinator
+git clone https://github.com/GeethaPardheev/medicare-equipment-coordinator.git && cd medicare-equipment-coordinator
 python3 -m unittest                 # 27 tests, about a second, no AI model needed
 ```
 
