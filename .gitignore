@@ -1,0 +1,7 @@
+.llm_cache/
+out/
+__pycache__/
+*.pyc
+.DS_Store
+# private interview notes, not part of the submission
+DEFENSE_PREP.md
